@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#install and config Haproxy in your server
+
+sudo apt-get install haproxy
+
+cat << EOF >> /etc/haproxy/haproxy.cfg
+frontend lb_front
+        bind *:80
+        default_backend lb_back
+
+backend lb_back
+       balance roundrobin
+       server web_01 18.207.155.224 check
+       server web-02 54.91.224.134 check
+EOF
