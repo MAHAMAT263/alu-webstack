@@ -1,4 +1,4 @@
-#!/user/bin/env bash
+#!/usr/bin/env bash
 
 #install and config Haproxy
 
@@ -39,12 +39,12 @@ defaults
 
 frontend lb_front
         bind *:80
-        bind *:443 ssl crt /etc/ssl/certs/www.mahamat.tech.pem
+	bind *:443 ssl crt /etc/letsencrypt/live/www.mahamat.tech/fullchain.pem
         mode http
         default_backend lb_back
 
 backend lb_back
-       balance roudrobin
+       balance roundrobin
        mode http
        server web_01 18.207.155.224 check
        server web_02 54.91.224.134 check
