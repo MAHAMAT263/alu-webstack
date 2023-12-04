@@ -1,7 +1,3 @@
-#!/usr/bin/env bash
-
-#install and config Haproxy
-
 global
 	log /dev/log	local0
 	log /dev/log	local1 notice
@@ -37,14 +33,24 @@ defaults
 	errorfile 503 /etc/haproxy/errors/503.http
 	errorfile 504 /etc/haproxy/errors/504.http
 
-frontend lb_front
-        bind *:80
-	bind *:443 ssl crt /etc/letsencrypt/live/www.mahamat.tech/fullchain.pem
+frontend www-http
         mode http
-        default_backend lb_back
+        timeout client 10s
+        bind *:80
+        default_backend allServers
 
-backend lb_back
-       balance roundrobin
-       mode http
-       server web_01 18.207.155.224 check
-       server web_02 54.91.224.134 check
+frontend www-https
+        bind *:80
+        bind *:443 ssl crt /etc/letsencrypt/live/www.mahamat.tech/www.mahamat.tech.pem
+        redirect scheme https code 301 if !{ ssl_fc }
+        default_backend allServers
+
+backend allServers
+        timeout connect 10s
+        timeout server  10s
+        balance roundrobin
+        mode http
+        server 5843-web-01 18.207.155.224:80 check
+        server 5843-web-02 54.91.224.134:80 check
+
+
